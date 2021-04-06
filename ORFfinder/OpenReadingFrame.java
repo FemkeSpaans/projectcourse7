@@ -143,13 +143,18 @@ public class OpenReadingFrame{
     }
 
 
-
+/**
+ * Custom exeception which throws an error if the given sequence is not DNA.
+ */
 class NotDNA extends Exception{
     public NotDNA(){
         super("This sequence is not DNA");
     }
 }
 
+/**
+ * Custom exeception which throws an error if the file given is not a FASTA file.
+ */
 class NotFASTA extends Exception{
     public NotFASTA(){
         super("This is not a FASTA file");
