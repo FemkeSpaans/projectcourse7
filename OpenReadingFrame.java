@@ -1,6 +1,5 @@
 package ORFfinder;
 import javax.swing.*;
-import java.awt.event.ActionListener;
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,7 +12,7 @@ public class OpenReadingFrame{
 
     public static void main(String[] args) {
         try {
-            new GUI();
+            new ORFfinder.GUI(name_file);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -25,21 +24,24 @@ public class OpenReadingFrame{
             return fileContent;
         }
 
-        public static void readFile () throws NotDNA {
+        public static String readFile (String name_file) throws NotDNA {
+
+        String sequence1 = "";
 
             try {
-                BufferedReader file = openFile(name_file.getText());
+                BufferedReader file = openFile(name_file);
                 String line;
 
                 while ((line = file.readLine()) != null) {
-                    sequence.setText(line);
+                    sequence1 = sequence1 + line;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (sequence.getText().matches("^[ATCG]*$")) {
+            if (sequence1.matches("^[ATCG]*$")) {
                 ORFfinder(data);
             } else throw new NotDNA();
+            return sequence1;
         }
 
 

@@ -1,4 +1,4 @@
-import com.mysql.cj.x.protobuf.MysqlxCursor;
+package ORFfinder;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +18,7 @@ public class GUI extends JFrame implements ActionListener {
     boolean pressed = false;
 
     public void frame(){
-        OpenReadingFrame frame = new OpenReadingFrame();
+        ORFfinder.OpenReadingFrame frame = new OpenReadingFrame();
         frame.setTitle("Open Reading Frame Predictor");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 800);
@@ -112,8 +112,9 @@ public class GUI extends JFrame implements ActionListener {
         if (e.getSource() == analyse_button){
             try {
                 pressed = true;
-                ORFfinder.OpenReadingFrame.readFile();
-            } catch (NotDNA notDNA) {
+                String one = ORFfinder.OpenReadingFrame.readFile();
+                sequence.setText(one);
+            } catch (ORFfinder.NotDNA notDNA) {
                 notDNA.printStackTrace();
             }
         }
@@ -130,7 +131,6 @@ public class GUI extends JFrame implements ActionListener {
         }
     }
 }
-
 
 class PressedBefore extends Exception{
     public PressedBefore() { super ("The save button cannot be pressed before the analyse button");
