@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author Femke Spaans, Ruben Kampf, Zoë van den Heuvel
+ * OpenReadingFrame
+ * Code to create the logica behind finding an open reading frame
+ */
 public class OpenReadingFrame{
 
     static ArrayList<ORF> data = new ArrayList<>();
@@ -21,10 +26,12 @@ public class OpenReadingFrame{
                 BufferedReader file = openFile(input_file);
                 String line;
 
-                while ((line = file.readLine()) != null) {
-                    text_sequence.append(line);
+                    while ((line = file.readLine()) != null) {
+                        if (line.startsWith((">|;"))) {
+                        text_sequence.append(line);
+                    }else throw new NotFASTA();
                 }
-            } catch (IOException e) {
+            } catch (IOException | NotFASTA e) {
                 e.printStackTrace();
             }
             if (text_sequence.toString().matches("^([ATCG]*$|[atgc]*$)")) {
