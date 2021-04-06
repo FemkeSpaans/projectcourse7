@@ -1,5 +1,4 @@
 package ORFfinder;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -16,7 +15,6 @@ public class GUI extends JFrame implements ActionListener {
     public static JPanel visualisation;
     static JLabel file_name_entered, orf_found, header_name, sequence_entered;
     static JTextArea sequence;
-
     boolean pressed = false;
 
     public static void frame(){

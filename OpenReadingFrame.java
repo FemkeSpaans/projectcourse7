@@ -9,15 +9,6 @@ public class OpenReadingFrame{
 
     static ArrayList<ORF> data = new ArrayList<>();
 
-    public static void main(String[] args) {
-        try {
-            new GUI.frame();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
         public static BufferedReader openFile (String filename) throws FileNotFoundException {
             return new BufferedReader(new FileReader(filename));
         }
