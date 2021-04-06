@@ -6,6 +6,11 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 
+/**
+ * @author Femke Spaans, Ruben Kampf, Zoë van den Heuvel
+ * GUI
+ * Code to create a graphical interface and interact with it
+ */
 public class GUI extends JFrame implements ActionListener {
 
     String sequence_string = "";
@@ -17,6 +22,10 @@ public class GUI extends JFrame implements ActionListener {
     static JTextArea sequence;
     boolean pressed = false;
 
+    /**
+     *  Creates a frame for the GUI and adds a title, sets size and layout.
+     *  It calls to the method gui()
+     */
     public static void frame(){
         GUI frame_gui = new GUI();
         frame_gui.setTitle("Open Reading Frame Predictor");
@@ -27,16 +36,19 @@ public class GUI extends JFrame implements ActionListener {
         frame_gui.setVisible(true);
     }
 
+    /**
+     * Creates several components and adds them to the GUI
+     */
     public void gui(){
         Container window = getContentPane();
 
-        // label for the file text field
+        // label for the file textfield
         file_name_entered = new JLabel();
         file_name_entered.setBounds(20, 10, 100, 20);
         file_name_entered.setText("Enter a filename:");
         window.add(file_name_entered);
 
-        // text field to enter a file
+        // textfield to enter a file
         name_file = new JTextField();
         name_file.setBounds(20, 40, 500, 20);
         window.add(name_file);
@@ -47,7 +59,7 @@ public class GUI extends JFrame implements ActionListener {
         window.add(browse_button);
         browse_button.addActionListener(this);
 
-        // label for the header text field
+        // label for the header textfield
         header_name = new JLabel();
         header_name.setBounds(20, 70, 100, 20);
         header_name.setText("Enter a header:");
@@ -65,12 +77,12 @@ public class GUI extends JFrame implements ActionListener {
         sequence_entered.setText("Enter a sequence:");
         window.add(sequence_entered);
 
-        // create text field in which to add a word to search for
+        // create textfield in which to add a word to search for
         search_word = new JTextField();
         search_word.setBounds(20, 100, 500, 20);
         window.add(search_word);
 
-        // create a button to analyse the chosen file with
+        // create a jbutton to analyse the chosen file with
         analyse_button.setBounds(610, 420, 150, 20);
         analyse_button.setText("Analyse sequence");
         window.add(analyse_button);
@@ -81,13 +93,13 @@ public class GUI extends JFrame implements ActionListener {
         sequence.setBounds(20, 150, 740, 260);
         window.add(sequence);
 
-        // create a label which says to enter a file
+        // create a jlabel which says to enter a file
         orf_found = new JLabel();
         orf_found.setBounds(20, 420, 300, 20);
         orf_found.setText("Open reading frames found in sequence:");
         window.add(orf_found);
 
-        // create panel in which to display the ORFs of the sequence which was given
+        // create jpanel in which to display the orf's of the sequence which was given
         visualisation = new JPanel();
         visualisation.setBounds(20, 450, 740, 260);
         visualisation.setBackground(Color.WHITE);
@@ -95,22 +107,29 @@ public class GUI extends JFrame implements ActionListener {
 
     }
 
-    static void visualiseORF (ArrayList<ORFfinder.OpenReadingFrame.ORF> ORFs) {
+    static void visualiseORF (ArrayList<ORFfinder.OpenReadingFrame.ORF> orfs) {
         visualisation.removeAll();
-        for (ORFfinder.OpenReadingFrame.ORF orf : ORFs) {
-            String orf_string;
+        for (ORFfinder.OpenReadingFrame.ORF orf : orfs) {
+            String orfstring = "";
             if (orf.open_reading_frame_sequence.length() > 50) {
-                orf_string = "Reading frame: " + orf.frame + " | position: " + orf.start + ":" + orf.stop + " | sequence: " + orf.open_reading_frame_sequence.substring(0, 47) + "...";
+                orfstring = "Reading frame: " + orf.frame + " | postition: " + orf.start + ":" + orf.stop + " | sequence: " + orf.open_reading_frame_sequence.substring(0, 47) + "...";
             } else {
-                orf_string = "Reading frame: " + orf.frame + " | position: " + orf.start + ":" + orf.stop + " | sequence: " + orf.open_reading_frame_sequence;
+                orfstring = "Reading frame: " + orf.frame + " | postition: " + orf.start + ":" + orf.stop + " | sequence: " + orf.open_reading_frame_sequence;
             }
-            JLabel orf_to_add = new JLabel(orf_string);
-            visualisation.add(orf_to_add);
+            JLabel orftoadd = new JLabel(orfstring);
+            visualisation.add(orftoadd);
             visualisation.revalidate();
             visualisation.repaint();
         }
     }
 
+    /**
+     * The actionPerforms for the three buttons of the GUI; browse, analyse and save.
+     * Browse button lets you browse and select a file.
+     * Analyse button turns pressed true, and then analyses the sequence in the file which was selected with the browse button.
+     * Save button, checks if pressed is true and only continues if it is, then saves a query to the database.
+     * @param e the event it listens to.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         JFileChooser select_file;
@@ -150,6 +169,9 @@ public class GUI extends JFrame implements ActionListener {
     }
 }
 
+/**
+ * Custom exception which throws an error if the save button is pressed before the analyse button. 
+ */
 class PressedBefore extends Exception{
     public PressedBefore() { super ("The save button cannot be pressed before the analyse button");
     }

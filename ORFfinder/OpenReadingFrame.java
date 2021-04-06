@@ -36,39 +36,39 @@ public class OpenReadingFrame{
 
         public static void ORF_finder(ArrayList < ORF > data, String text_sequence) {
 
-            Matcher start_codon = Pattern.compile("(atg)").matcher(text_sequence);
-            Matcher stop_codons = Pattern.compile("(taa|tga|tag)").matcher(text_sequence);
-            Matcher reverse_start_codon = Pattern.compile("(gta)").matcher(text_sequence);
-            Matcher reverse_stop_codons = Pattern.compile("(aat|agt|gat)").matcher(text_sequence);
+            Matcher start = Pattern.compile("(atg)").matcher(text_sequence);
+            Matcher stop = Pattern.compile("(taa|tga|tag)").matcher(text_sequence);
+            Matcher rstart = Pattern.compile("(gta)").matcher(text_sequence);
+            Matcher rstop = Pattern.compile("(aat|agt|gat)").matcher(text_sequence);
 
-            ArrayList<Integer> position_start = new ArrayList<>();
-            ArrayList<Integer> position_stop = new ArrayList<>();
-            ArrayList<Integer> reverse_position_start = new ArrayList<>();
-            ArrayList<Integer> reverse_position_stop = new ArrayList<>();
+            ArrayList<Integer> posstart = new ArrayList<>();
+            ArrayList<Integer> posstop = new ArrayList<>();
+            ArrayList<Integer> rposstart = new ArrayList<>();
+            ArrayList<Integer> rposstop = new ArrayList<>();
 
-            while (start_codon.find()) {
-                position_start.add(start_codon.start());
+            while (start.find()) {
+                posstart.add(start.start());
             }
-            while (stop_codons.find()) {
-                position_stop.add(stop_codons.end());
+            while (stop.find()) {
+                posstop.add(stop.end());
             }
-            while (reverse_stop_codons.find()) {
-                reverse_position_stop.add(reverse_stop_codons.start());
+            while (rstop.find()) {
+                rposstop.add(rstop.start());
             }
-            while (reverse_start_codon.find()) {
-                reverse_position_start.add(reverse_start_codon.end());
+            while (rstart.find()) {
+                rposstart.add(rstart.end());
             }
 
-            for (int start : position_start) {
+            for (int strt : posstart) {
                 int i = 0;
-                for (int stop : position_stop) {
-                    if (stop > start && stop % 3 == start % 3) {
+                for (int stp : posstop) {
+                    if (stp > strt && stp % 3 == strt % 3) {
                         ORF tempORF = new ORF();
-                        tempORF.start = start + 1;
-                        tempORF.stop = stop + 1;
-                        position_stop.remove(i);
-                        tempORF.frame = start % 3 + 1;
-                        tempORF.open_reading_frame_sequence = text_sequence.substring(start, stop);
+                        tempORF.start = strt + 1;
+                        tempORF.stop = stp + 1;
+                        posstop.remove(i);
+                        tempORF.frame = strt % 3 + 1;
+                        tempORF.open_reading_frame_sequence = text_sequence.substring(strt, stp);
                         data.add(tempORF);
                         break;
                     }
@@ -76,16 +76,16 @@ public class OpenReadingFrame{
                 }
             }
 
-            for (int reverse_start : reverse_position_start) {
+            for (int rstrt : rposstart) {
                 int x = 0;
-                for (int reverse_stop : reverse_position_stop) {
-                    if (reverse_stop < reverse_start && reverse_stop % 3 == reverse_start % 3) {
+                for (int rstp : rposstop) {
+                    if (rstp < rstrt && rstp % 3 == rstrt % 3) {
                         ORF tempORF = new ORF();
-                        tempORF.start = reverse_start + 1;
-                        tempORF.stop = reverse_stop + 1;
-                        reverse_position_stop.remove(x);
-                        tempORF.frame = (reverse_start % 3 * -1) - 1;
-                        StringBuilder sb = new StringBuilder(text_sequence.substring(reverse_stop, reverse_start));
+                        tempORF.start = rstrt + 1;
+                        tempORF.stop = rstp + 1;
+                        rposstop.remove(x);
+                        tempORF.frame = (rstrt % 3 * -1) - 1;
+                        StringBuilder sb = new StringBuilder(text_sequence.substring(rstp, rstrt));
                         sb.reverse();
                         tempORF.open_reading_frame_sequence = (sb.toString());
                         data.add(tempORF);
@@ -137,7 +137,6 @@ public class OpenReadingFrame{
                 }
 
             } catch (SQLException | ClassNotFoundException e) {
-                System.out.println("SQL error");
             }
         }
 
@@ -148,6 +147,12 @@ public class OpenReadingFrame{
 class NotDNA extends Exception{
     public NotDNA(){
         super("This sequence is not DNA");
+    }
+}
+
+class NotFASTA extends Exception{
+    public NotFASTA(){
+        super("This is not a FASTA file");
     }
 }
 
