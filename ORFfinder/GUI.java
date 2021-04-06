@@ -170,7 +170,7 @@ public class GUI extends JFrame implements ActionListener {
 }
 
 /**
- * Custom exception which throws an error if the save button is pressed before the analyse button. 
+ * Custom exception which throws an error if the save button is pressed before the analyse button.
  */
 class PressedBefore extends Exception{
     public PressedBefore() { super ("The save button cannot be pressed before the analyse button");
