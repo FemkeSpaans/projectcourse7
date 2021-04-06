@@ -1,5 +1,4 @@
 package ORFfinder;
-import javax.swing.*;
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ public class OpenReadingFrame{
 
     public static void main(String[] args) {
         try {
-            new ORFfinder.GUI(name_file);
+            new GUI.frame();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -20,39 +19,36 @@ public class OpenReadingFrame{
 
 
         public static BufferedReader openFile (String filename) throws FileNotFoundException {
-            BufferedReader fileContent = new BufferedReader(new FileReader(filename));
-            return fileContent;
+            return new BufferedReader(new FileReader(filename));
         }
 
-        public static String readFile (String name_file) throws NotDNA {
+        public static String readFile (String input_file) throws NotDNA {
 
-        String sequence1 = "";
+        StringBuilder text_sequence = new StringBuilder();
 
             try {
-                BufferedReader file = openFile(name_file);
+                BufferedReader file = openFile(input_file);
                 String line;
 
                 while ((line = file.readLine()) != null) {
-                    sequence1 = sequence1 + line;
+                    text_sequence.append(line);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (sequence1.matches("^[ATCG]*$")) {
-                ORFfinder(data);
+            if (text_sequence.toString().matches("^[ATCG]*$")) {
+                ORF_finder(data, text_sequence.toString());
             } else throw new NotDNA();
-            return sequence1;
+            return text_sequence.toString();
         }
 
 
-        public static ArrayList<ORF> ORFfinder (ArrayList < ORF > data) {
+        public static void ORF_finder(ArrayList < ORF > data, String text_sequence) {
 
-            String seq = sequence.getText().toLowerCase();
-
-            Matcher start = Pattern.compile("(atg)").matcher(seq);
-            Matcher stop = Pattern.compile("(taa|tga|tag)").matcher(seq);
-            Matcher rstart = Pattern.compile("(gta)").matcher(seq);
-            Matcher rstop = Pattern.compile("(aat|agt|gat)").matcher(seq);
+            Matcher start = Pattern.compile("(atg)").matcher(text_sequence);
+            Matcher stop = Pattern.compile("(taa|tga|tag)").matcher(text_sequence);
+            Matcher rstart = Pattern.compile("(gta)").matcher(text_sequence);
+            Matcher rstop = Pattern.compile("(aat|agt|gat)").matcher(text_sequence);
 
             ArrayList<Integer> posstart = new ArrayList<>();
             ArrayList<Integer> posstop = new ArrayList<>();
@@ -81,7 +77,7 @@ public class OpenReadingFrame{
                         tempORF.stop = stp + 1;
                         posstop.remove(i);
                         tempORF.frame = strt % 3 + 1;
-                        tempORF.open_reading_frame_sequence = seq.substring(strt, stp);
+                        tempORF.open_reading_frame_sequence = text_sequence.substring(strt, stp);
                         data.add(tempORF);
                         break;
                     }
@@ -98,7 +94,7 @@ public class OpenReadingFrame{
                         tempORF.stop = rstp + 1;
                         rposstop.remove(x);
                         tempORF.frame = (rstrt % 3 * -1) - 1;
-                        StringBuilder sb = new StringBuilder(seq.substring(rstp, rstrt));
+                        StringBuilder sb = new StringBuilder(text_sequence.substring(rstp, rstrt));
                         sb.reverse();
                         tempORF.open_reading_frame_sequence = (sb.toString());
                         data.add(tempORF);
@@ -107,36 +103,18 @@ public class OpenReadingFrame{
                     x++;
                 }
             }
-            visualiseORF(data);
-            return data;
+            ORFfinder.GUI.visualiseORF(data);
         }
 
 
-        static void visualiseORF (ArrayList < ORF > orfs) {
-            visualisation.removeAll();
-            for (ORF orf : orfs) {
-                String orfstring = "";
-                if (orf.open_reading_frame_sequence.length() > 50) {
-                    orfstring = "Reading frame: " + orf.frame + " | postition: " + orf.start + ":" + orf.stop + " | sequence: " + orf.open_reading_frame_sequence.substring(0, 47) + "...";
-                } else {
-                    orfstring = "Reading frame: " + orf.frame + " | postition: " + orf.start + ":" + orf.stop + " | sequence: " + orf.open_reading_frame_sequence;
-                }
-                JLabel orftoadd = new JLabel(orfstring);
-                visualisation.add(orftoadd);
-                visualisation.revalidate();
-                visualisation.repaint();
-
-            }
-        }
-
-        static class ORF {
+    static class ORF {
             int start;
             int stop;
             int frame;
             String open_reading_frame_sequence;
         }
 
-        public static void saveDatabase (ArrayList < ORF > data) {
+        public static void saveDatabase (ArrayList < ORF > data, String search_word, String text_sequence) {
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
@@ -144,8 +122,8 @@ public class OpenReadingFrame{
                         "bi212", "Aa200012!");
                 String query_save = "INSERT INTO Query(HeaderID, Sequence) VALUES(?,?)";
                 PreparedStatement values_query_save = connection_database.prepareStatement(query_save);
-                values_query_save.setString(1, search_word.getText());
-                values_query_save.setString(2, sequence.getText());
+                values_query_save.setString(1, search_word);
+                values_query_save.setString(2, text_sequence);
                 values_query_save.execute();
 
                 String open_reading_frame_save = "INSERT INTO Open_Reading_Frame(Query_HeaderID, ORF, Reading_frame, Start, Stop) VALUES(?,?,?,?,?)";
@@ -159,7 +137,7 @@ public class OpenReadingFrame{
                     int start = orf.start;
                     int stop = orf.stop;
 
-                    values_open_reading_frame_save.setString(1, search_word.getText());
+                    values_open_reading_frame_save.setString(1, search_word);
                     values_open_reading_frame_save.setString(2, orf_seq);
                     values_open_reading_frame_save.setInt(3, frame);
                     values_open_reading_frame_save.setInt(4, start);

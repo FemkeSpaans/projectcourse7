@@ -5,26 +5,28 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 
 public class GUI extends JFrame implements ActionListener {
 
-    static JButton save_button = new JButton(), analyse_button = new JButton(),
-            history_button = new JButton(), browse_button = new JButton();
+    String sequence_string = "";
+
+    static JButton save_button = new JButton(), analyse_button = new JButton(), browse_button = new JButton();
     static JTextField name_file, search_word;
-    static JPanel visualisation;
+    public static JPanel visualisation;
     static JLabel file_name_entered, orf_found, header_name, sequence_entered;
     static JTextArea sequence;
-    private JFileChooser select_file;
+
     boolean pressed = false;
 
-    public void frame(){
-        ORFfinder.OpenReadingFrame frame = new OpenReadingFrame();
-        frame.setTitle("Open Reading Frame Predictor");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 800);
-        frame.setLayout(null);
-        frame.gui();
-        frame.setVisible(true);
+    public static void frame(){
+        GUI frame_gui = new GUI();
+        frame_gui.setTitle("Open Reading Frame Predictor");
+        frame_gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame_gui.setSize(800, 800);
+        frame_gui.setLayout(null);
+        frame_gui.gui();
+        frame_gui.setVisible(true);
     }
 
     public void gui(){
@@ -95,8 +97,25 @@ public class GUI extends JFrame implements ActionListener {
 
     }
 
+    static void visualiseORF (ArrayList<ORFfinder.OpenReadingFrame.ORF> orfs) {
+        visualisation.removeAll();
+        for (ORFfinder.OpenReadingFrame.ORF orf : orfs) {
+            String orfstring = "";
+            if (orf.open_reading_frame_sequence.length() > 50) {
+                orfstring = "Reading frame: " + orf.frame + " | postition: " + orf.start + ":" + orf.stop + " | sequence: " + orf.open_reading_frame_sequence.substring(0, 47) + "...";
+            } else {
+                orfstring = "Reading frame: " + orf.frame + " | postition: " + orf.start + ":" + orf.stop + " | sequence: " + orf.open_reading_frame_sequence;
+            }
+            JLabel orftoadd = new JLabel(orfstring);
+            visualisation.add(orftoadd);
+            visualisation.revalidate();
+            visualisation.repaint();
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
+        JFileChooser select_file;
 
         File selectedFile;
         int reply;
@@ -112,8 +131,8 @@ public class GUI extends JFrame implements ActionListener {
         if (e.getSource() == analyse_button){
             try {
                 pressed = true;
-                String one = ORFfinder.OpenReadingFrame.readFile();
-                sequence.setText(one);
+                sequence_string = ORFfinder.OpenReadingFrame.readFile(name_file.getText());
+                sequence.setText(sequence_string);
             } catch (ORFfinder.NotDNA notDNA) {
                 notDNA.printStackTrace();
             }
@@ -121,7 +140,8 @@ public class GUI extends JFrame implements ActionListener {
 
         if (e.getSource() == save_button){
             if (pressed){
-                ORFfinder.OpenReadingFrame.saveDatabase(data);
+                String henk = search_word.getText()
+;                ORFfinder.OpenReadingFrame.saveDatabase(OpenReadingFrame.data, henk, sequence_string);
             }else try {
                 throw new PressedBefore();
             } catch (PressedBefore pressedBefore) {
