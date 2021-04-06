@@ -109,12 +109,12 @@ public class GUI extends JFrame implements ActionListener {
 
     /**
      * uses the Jpanel of the GUI to display the information
-     * @param orfs
+     * @param orfs takes ORF object arraylist
      */
     static void visualiseORF (ArrayList<ORFfinder.OpenReadingFrame.ORF> orfs) {
         visualisation.removeAll();
         for (ORFfinder.OpenReadingFrame.ORF orf : orfs) {
-            String orfstring = "";
+            String orfstring;
             if (orf.open_reading_frame_sequence.length() > 50) {
                 orfstring = "Reading frame: " + orf.frame + " | postition: " + orf.start + ":" + orf.stop + " | sequence: " + orf.open_reading_frame_sequence.substring(0, 47) + "...";
             } else {
