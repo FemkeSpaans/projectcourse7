@@ -26,7 +26,7 @@ public class OpenReadingFrame{
 
     /**
      * Reads the file which was opened in openFile
-     * If it is not a fasta file it throws an exception, if it is not DNA it throws an exception
+     * If it is not DNA it throws an exception
      * @param input_file
      * @return text_sequence
      * @throws NotDNA
@@ -40,11 +40,12 @@ public class OpenReadingFrame{
                 String line;
 
                     while ((line = file.readLine()) != null) {
-                        if (line.startsWith((">|;"))) {
-                        text_sequence.append(line);
-                    }else throw new NotFASTA();
+                        if (!line.startsWith(">")){
+                            text_sequence.append(line);
+                        }
                 }
-            } catch (IOException | NotFASTA e) {
+                    file.close();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             if (text_sequence.toString().matches("^([ATCG]*$|[atgc]*$)")) {
@@ -54,7 +55,12 @@ public class OpenReadingFrame{
         }
 
 
-        public static void ORF_finder(ArrayList < ORF > data, String text_sequence) {
+    /**
+     * Finds the open reading frames, frame, start position and stop position of a given sequence.
+     * @param data
+     * @param text_sequence
+     */
+    public static void ORF_finder(ArrayList < ORF > data, String text_sequence) {
 
             Matcher start = Pattern.compile("(atg)").matcher(text_sequence);
             Matcher stop = Pattern.compile("(taa|tga|tag)").matcher(text_sequence);
@@ -125,7 +131,14 @@ public class OpenReadingFrame{
             String open_reading_frame_sequence;
         }
 
-        public static void saveDatabase (ArrayList < ORF > data, String search_word, String text_sequence) {
+
+    /**
+     * Creates two queries which communicate with the database to save the necessary information
+     * @param data
+     * @param search_word
+     * @param text_sequence
+     */
+    public static void saveDatabase (ArrayList < ORF > data, String search_word, String text_sequence) {
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
@@ -172,13 +185,6 @@ class NotDNA extends Exception{
     }
 }
 
-/**
- * Custom exeception which throws an error if the file given is not a FASTA file.
- */
-class NotFASTA extends Exception{
-    public NotFASTA(){
-        super("This is not a FASTA file");
-    }
-}
+
 
 

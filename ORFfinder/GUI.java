@@ -107,6 +107,10 @@ public class GUI extends JFrame implements ActionListener {
 
     }
 
+    /**
+     * uses the Jpanel of the GUI to display the information
+     * @param orfs
+     */
     static void visualiseORF (ArrayList<ORFfinder.OpenReadingFrame.ORF> orfs) {
         visualisation.removeAll();
         for (ORFfinder.OpenReadingFrame.ORF orf : orfs) {
