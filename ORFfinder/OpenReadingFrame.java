@@ -14,10 +14,23 @@ public class OpenReadingFrame{
 
     static ArrayList<ORF> data = new ArrayList<>();
 
+    /**
+     * Opens a file
+     * @param filename
+     * @return filename
+     * @throws FileNotFoundException
+     */
         public static BufferedReader openFile (String filename) throws FileNotFoundException {
             return new BufferedReader(new FileReader(filename));
         }
 
+    /**
+     * Reads the file which was opened in openFile
+     * If it is not a fasta file it throws an exception, if it is not DNA it throws an exception
+     * @param input_file
+     * @return text_sequence
+     * @throws NotDNA
+     */
         public static String readFile (String input_file) throws NotDNA {
 
         StringBuilder text_sequence = new StringBuilder();
